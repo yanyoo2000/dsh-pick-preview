@@ -251,7 +251,7 @@ function aboutBlock(rec) {
 
 /* ---------------- 全部插件 ---------------- */
 let ALL_PAGE = 0
-const ALL_SIZE = 48
+const ALL_SIZE = 24
 
 function buildAllCat() {
   const sel = $('#allCat')
@@ -606,7 +606,7 @@ function renderVerdict() {
   const winName = esc(win.n)
   const html = []
 
-  html.push(`<div class="verdict win"><h4>✅ 首选 ${winName}</h4><p>` +
+  html.push(`<div class="verdict win"><h4>首选<i>${winName}</i></h4><p>` +
     `日常基线 <b>${num(win.deep.base)}</b> 次/天（已扣掉发布拉取），` +
     `近 7 日环比 <b>${pct(win.deep.growth)}</b>，` +
     `${win.deep.versions} 个版本、约 <b>${win.deep.cadence === null ? '—' : win.deep.cadence + ' 天'}</b>一个，` +
@@ -614,7 +614,7 @@ function renderVerdict() {
     `${win.deep.growth !== null && win.deep.growth > 0 ? '仍在涨。' : '体量最大且维护稳定。'}</p></div>`)
 
   if (alt && alt !== win) {
-    html.push(`<div class="verdict alt"><h4>⚡ 备选 ${esc(alt.n)}</h4><p>` +
+    html.push(`<div class="verdict alt"><h4>备选<i>${esc(alt.n)}</i></h4><p>` +
       `日常基线 <b>${num(alt.deep.base)}</b> 次/天，环比 <b>${pct(alt.deep.growth)}</b>，` +
       `最近更新 <b>${alt.deep.age} 天前</b>，健康度 <b>${alt.deep.s}</b>。` +
       (alt.deep.growth !== null && alt.deep.growth > (win.deep.growth || 0)
@@ -626,7 +626,7 @@ function renderVerdict() {
     const baseTxt = no.deep.base > 0
       ? `，日常基线 ${num(no.deep.base)} 次/天，只有首选的 ${Math.round(no.deep.base / Math.max(win.deep.base, 1) * 100)}%`
       : `，日常基线为 0 次/天`
-    html.push(`<div class="verdict no"><h4>⚠️ 不推荐 ${esc(no.n)}</h4><p>` +
+    html.push(`<div class="verdict no"><h4>不推荐<i>${esc(no.n)}</i></h4><p>` +
       `健康度 <b>${no.deep.s}</b>（本组最低）` +
       (no.deep.age > 90 ? `，<b>${no.deep.age} 天没发新版本</b>，可能已进入维护停滞。` : '') +
       baseTxt + `。</p></div>`)

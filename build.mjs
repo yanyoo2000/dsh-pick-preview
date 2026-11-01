@@ -68,14 +68,8 @@ if (fs.existsSync(NM)) {
   }
 }
 
-/* ---------- 5) 样式：仓库里的 panel.css（原版样式）+ extra.css（本页新增） ---------- */
-function readPanelCss() {
-  const local = path.join(HERE, 'panel.css')
-  if (fs.existsSync(local)) return fs.readFileSync(local, 'utf8')
-  const panelHtml = fs.readFileSync(path.join(PKG, 'web/panel.html'), 'utf8')
-  return panelHtml.match(/<style>([\s\S]*?)<\/style>/)[1].trim()
-}
-const css = readPanelCss() + '\n\n' + fs.readFileSync(path.join(HERE, 'extra.css'), 'utf8')
+/* ---------- 5) 样式：整套重写（印刷物世界），不再叠在原版样式上 ---------- */
+const css = fs.readFileSync(path.join(HERE, 'theme.css'), 'utf8')
 
 /* ---------- 6) 中文介绍：包名 → 一段话 ---------- */
 const intro = JSON.parse(fs.readFileSync(path.join(HERE, 'intro.json'), 'utf8'))
