@@ -54,20 +54,6 @@ for (const r of all) {
 }
 const slim = { anchor: catalog.anchor, total: catalog.total, deepCount: catalog.deepCount, packages }
 
-/* ---------- 4) 本机装了哪些插件（用来显示「✓ 已安装 / 已装同类」） ---------- */
-const NM = path.join(HOME, '.dsh/profiles/desktop/node_modules')
-const installed = []
-if (fs.existsSync(NM)) {
-  for (const entry of fs.readdirSync(NM)) {
-    const push = name => { if (packages[name] && !installed.includes(name)) installed.push(name) }
-    try {
-      if (entry.startsWith('@')) {
-        for (const sub of fs.readdirSync(path.join(NM, entry))) push(`${entry}/${sub}`)
-      } else push(entry)
-    } catch { /* 读不动就跳过 */ }
-  }
-}
-
 /* ---------- 5) 样式：整套重写（印刷物世界），不再叠在原版样式上 ---------- */
 const css = fs.readFileSync(path.join(HERE, 'theme.css'), 'utf8')
 
@@ -80,7 +66,6 @@ let html = fs.readFileSync(path.join(HERE, 'shell.html'), 'utf8')
 html = html
   .replace('{{CSS}}', () => css)
   .replace('{{DATA}}', () => json(slim))
-  .replace('{{INSTALLED}}', () => json(installed))
   .replace('{{INTRO}}', () => json(intro))
   .replace('{{JS}}', () => fs.readFileSync(path.join(HERE, 'panel.js'), 'utf8'))
 
@@ -88,5 +73,4 @@ const out = path.join(HERE, 'index.html')
 fs.writeFileSync(out, html)
 console.log(`目录：${catalogPath}（${catalog.anchor}，${catalog.total} 个包，${catalog.deepCount} 个带去噪指标）`)
 console.log(`介绍：${Object.keys(intro).length} 条`)
-console.log(`已装：${installed.join('、') || '（本机未检测到，不影响页面）'}`)
 console.log(`输出：${out}  ${(fs.statSync(out).size / 1024).toFixed(0)} KB`)
