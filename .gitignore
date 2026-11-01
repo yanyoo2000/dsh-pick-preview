@@ -1,0 +1,10 @@
+# 中间产物，可由 tools/ 里的脚本重建
+batches/
+out/
+gen-input.json
+manifest.json
+
+node_modules/
+*.log
+.DS_Store
+Thumbs.db

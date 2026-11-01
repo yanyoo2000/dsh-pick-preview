@@ -1,0 +1,54 @@
+/* ===== 本页新增：插件介绍区 / 全部插件页 ===== */
+
+/* 卡片里的介绍：完整显示，不截断 */
+.cands{align-items:start}
+.cand .zh{font-size:12px;line-height:1.62;color:var(--t2);margin:6px 0 5px}
+.cand .zh b{color:var(--text);font-weight:650}
+.cand .src{font-size:10.5px;color:var(--t3);line-height:1.5;margin:0 0 7px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cand .src::before{content:'原文 ';opacity:.7}
+.cand .tags{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 7px}
+.cand .tags span{font-size:10px;color:var(--t3);background:var(--soft);border-radius:4px;padding:1px 6px}
+.cand .zh.none{color:var(--t3);font-style:normal}
+
+/* 排行榜：名字下面完整显示介绍，不截断 */
+table.rank td.nm .nm-sub{font-size:10.5px;color:var(--t3);font-weight:400;margin-top:3px;line-height:1.6;
+  max-width:640px;white-space:normal}
+
+/* 我的监控：同样完整显示 */
+.mon .nm .mon-sub{display:block;font-size:10.5px;color:var(--t3);font-weight:400;margin-top:2px;
+  line-height:1.6;max-width:600px;white-space:normal}
+/* 介绍多行后，右侧的数字/按钮跟第一行对齐，别垂直居中到整块中间 */
+.mon{align-items:flex-start}
+.mon .mrank,.mon .live,.mon .mlinks,.mon .x{margin-top:1px}
+
+/* 全部插件页 */
+.allbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.allbar input{flex:1 1 220px;min-width:0;appearance:none;border:1px solid var(--line);border-radius:8px;
+  padding:8px 12px;font-family:inherit;font-size:12.5px;background:var(--input);color:var(--text)}
+.allbar input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--focus);background:var(--panel)}
+.allbar select{appearance:none;border:1px solid var(--line);border-radius:8px;padding:8px 11px;
+  font-family:inherit;font-size:12.5px;background:var(--panel);color:var(--t2);cursor:pointer}
+.allcount{font-size:11.5px;color:var(--t3);margin-left:auto;font-variant-numeric:tabular-nums}
+.pager{display:flex;gap:6px;justify-content:center;align-items:center;margin-top:16px;flex-wrap:wrap}
+.pager button{appearance:none;font-family:inherit;font-size:12px;border:1px solid var(--line);background:var(--panel);
+  color:var(--t2);border-radius:7px;padding:5px 11px;cursor:pointer;font-variant-numeric:tabular-nums}
+.pager button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.pager button.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:650}
+.pager button:disabled{opacity:.45;cursor:default}
+.pager .gap{color:var(--t3);font-size:12px;padding:0 2px}
+
+/* 全部插件页的卡片不显示勾选框，整卡可点（打开 npm） */
+.cand.plain{cursor:default}
+.cand.plain:hover{border-color:var(--accent-line)}
+.cand.plain .nm .v{color:var(--t3);font-weight:500}
+
+/* 全部页：卡片高度差异大，用列布局排，避免 grid 行内留下大片空白 */
+#allList{display:block;column-width:330px;column-gap:11px}
+#allList .cand{break-inside:avoid;page-break-inside:avoid;margin-bottom:11px}
+
+/* 介绍这块在窄栏里收一点 */
+@media(max-width:480px){
+  table.rank td.nm .nm-sub{max-width:260px}
+  .mon .nm .mon-sub{max-width:300px}
+}
