@@ -267,7 +267,7 @@ function allCard(r) {
         `<span class="rel">${esc(r.cat)}</span>` +
         (d ? '<span class="ok" title="有去噪指标">✓ 可比较</span>' : '<span class="nook" title="周下载 Top 之外，缺基线/环比/节奏">仅基础</span>') +
       `</div>` +
-      `<div class="rk">${rankText(r)}</div>` +
+      `<div class="rk">${rankText(r, false)}</div>` +
       aboutBlock(r) +
       `<div class="kv">` +
         `<span>周 <b>${num(r.w)}</b></span>` +
@@ -327,10 +327,11 @@ function renderPager(pages) {
 }
 
 /* ---------------- 排名文案与外链 ---------------- */
-function rankText(rec) {
+/** 卡片上分类已经用徽章显示，rankText 就不再重复一遍分类名 */
+function rankText(rec, withCat = true) {
   if (!rec.rank) return ''
   const total = `总榜 #<b>${num(rec.rank)}</b>`
-  const cat = rec.crank ? ` · ${esc(rec.cat)} #<b>${num(rec.crank)}</b>` : ''
+  const cat = withCat && rec.crank ? ` · ${esc(rec.cat)} #<b>${num(rec.crank)}</b>` : ''
   return total + cat
 }
 
@@ -492,7 +493,7 @@ function renderCands(need) {
         `<span class="rel">${esc(rec.cat)}</span>` +
         (d ? '<span class="ok" title="有去噪指标，可参与健康度比较">✓ 可比较</span>' : '<span class="nook" title="未进入去噪范围（周下载 Top 之外），缺基线/环比/节奏">仅基础</span>') +
         `</div>` +
-        `<div class="rk">${rankText(rec)}</div>` +
+        `<div class="rk">${rankText(rec, false)}</div>` +
         aboutBlock(rec) +
         `<div class="kv">` +
           `<span>周 <b>${num(rec.w)}</b></span>` +

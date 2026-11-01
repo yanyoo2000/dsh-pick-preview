@@ -1,54 +1,262 @@
-/* ===== 本页新增：插件介绍区 / 全部插件页 ===== */
+/* ===================================================================
+   本页新增：插件介绍区 / 全部插件页 / 视觉打磨
+   原版样式见 panel.css（从 dsh-pick 的 web/panel.html 提取，不改动），
+   这一层负责介绍区和整体观感。
+   =================================================================== */
 
-/* 卡片里的介绍：完整显示，不截断 */
-.cands{align-items:start}
-.cand .zh{font-size:12px;line-height:1.62;color:var(--t2);margin:6px 0 5px}
+/* ---------- 0. 基础校准：把过淡的辅助灰提上来 ----------
+   原版 --t3 在白底只有 3.0:1，小字号读不清；这里统一提到 4.5:1 以上 */
+:root{
+  --t3:#6d7887;
+  --line:#e3e6eb;
+  --hair:rgba(16,24,40,.07);
+}
+:root[data-theme="dark"]{
+  --t3:#959dad;
+  --line:rgba(255,255,255,.14);
+  --hair:rgba(255,255,255,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --t3:#959dad;
+    --line:rgba(255,255,255,.14);
+    --hair:rgba(255,255,255,.07);
+  }
+}
+
+/* 浏览器自带的那些表面也属于设计：选中色、滚动条、聚焦环 */
+::selection{background:color-mix(in srgb,var(--accent) 28%,transparent);color:var(--text)}
+:root{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--t3) 45%,transparent) transparent}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--t3) 32%,transparent);
+  border-radius:8px;border:3px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:color-mix(in srgb,var(--t3) 55%,transparent);
+  background-clip:padding-box;border:3px solid transparent}
+:focus-visible{outline:2px solid color-mix(in srgb,var(--accent) 70%,transparent);outline-offset:2px}
+
+/* ---------- 1. 候选卡：让介绍成为主体 ----------
+   卡片高度随介绍长短变化很大，用列布局排，避免网格行内留下大片空白 */
+.cands{display:block;column-width:340px;column-gap:12px}
+.cands > .cand{break-inside:avoid;page-break-inside:avoid;margin-bottom:12px}
+
+.cand{
+  padding:15px 16px;
+  border-radius:12px;
+  gap:12px;
+  transition:border-color .18s ease,background .18s ease,box-shadow .18s ease;
+}
+.cand:hover{
+  border-color:color-mix(in srgb,var(--accent) 38%,transparent);
+  box-shadow:0 6px 20px -12px var(--shadow),0 1px 2px -1px var(--shadow);
+}
+.cand.on{
+  border-color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 9%,var(--input));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent);
+}
+.cand.on:hover{box-shadow:0 0 0 1px var(--accent),0 6px 20px -12px var(--shadow)}
+
+/* 勾选框：选中时更明确 */
+.cand .box{width:16px;height:16px;border-radius:5px;transition:background .15s,border-color .15s}
+
+/* 名字行：名字拉住视线，徽章退到两侧 */
+.cand .nm{font-size:14px;font-weight:650;letter-spacing:-.01em;gap:7px;line-height:1.35}
+.cand .nm .v{font-size:11px;font-weight:500;color:var(--t3);letter-spacing:0}
+.cand .nm .rel{margin-left:0;font-size:10px;font-weight:600;letter-spacing:.01em;
+  color:var(--t2);background:var(--soft);border-radius:5px;padding:2px 7px}
+.cand .nm .ok,.cand .nm .nook{margin-left:0;font-size:9.5px;letter-spacing:.02em}
+
+/* 排名：压到名字下面，和名字同一组 */
+.cand .rk{font-size:11px;color:var(--t3);margin:1px 0 0;font-variant-numeric:tabular-nums}
+.cand .rk b{font-weight:650}
+
+/* 介绍：这是卡片的主角 */
+.cand .zh{
+  font-size:13.5px;
+  line-height:1.72;
+  color:color-mix(in srgb,var(--text) 78%,var(--t3));
+  margin:11px 0 0;
+  letter-spacing:.005em;
+}
 .cand .zh b{color:var(--text);font-weight:650}
-.cand .src{font-size:10.5px;color:var(--t3);line-height:1.5;margin:0 0 7px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cand .src::before{content:'原文 ';opacity:.7}
-.cand .tags{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 7px}
+
+/* npm 原文：次要中的次要，一行，淡 */
+.cand .src{
+  font-size:10.5px;
+  line-height:1.55;
+  color:var(--t3);
+  margin:7px 0 0;
+  padding-left:8px;
+  border-left:1px solid var(--hair);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cand .src::before{content:'原文 ';opacity:.65}
+
+.cand .tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 0}
 .cand .tags span{font-size:10px;color:var(--t3);background:var(--soft);border-radius:4px;padding:1px 6px}
-.cand .zh.none{color:var(--t3);font-style:normal}
 
-/* 排行榜：名字下面完整显示介绍，不截断 */
-table.rank td.nm .nm-sub{font-size:10.5px;color:var(--t3);font-weight:400;margin-top:3px;line-height:1.6;
-  max-width:640px;white-space:normal}
+/* 数字：两列网格，标签轻、数值稳 */
+.cand .kv{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px 10px;
+  font-size:11px;
+  color:var(--t3);
+  margin-top:13px;
+  padding-top:0;
+  border-top:0;
+}
+.cand .kv > span{display:flex;align-items:baseline;gap:5px;min-width:0;white-space:nowrap}
+.cand .kv b{
+  font-size:12.5px;font-weight:600;color:var(--t2);
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+}
 
-/* 我的监控：同样完整显示 */
-.mon .nm .mon-sub{display:block;font-size:10.5px;color:var(--t3);font-weight:400;margin-top:2px;
-  line-height:1.6;max-width:600px;white-space:normal}
-/* 介绍多行后，右侧的数字/按钮跟第一行对齐，别垂直居中到整块中间 */
+/* 卡片底部操作 */
+.cand .links{margin-top:11px;padding-top:10px;border-top:1px solid var(--hair);gap:7px}
+.cand .lk{font-size:11px;padding:3px 9px;transition:border-color .15s,color .15s,background .15s}
+.cand .ai{height:21px;font-size:10.5px}
+.cand .inst{font-size:11px;padding:3px 11px;border-radius:6px;transition:background .15s,color .15s}
+
+/* 提醒行：压低存在感，别和介绍抢 */
+.cand .chk{margin-top:9px;font-size:10.5px;line-height:1.55;gap:3px 12px}
+.cand .chk .warn{color:var(--warn-text);opacity:.9}
+.cand .chk .good{color:var(--ok-text);opacity:.9}
+
+/* ---------- 2. 入场：一次性的轻微上浮，不铺满全屏 ---------- */
+@keyframes rise{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:none}
+}
+.cands > .cand:nth-child(-n+12){
+  animation:rise .42s cubic-bezier(.16,1,.3,1) both;
+}
+.cands > .cand:nth-child(1){animation-delay:0ms}
+.cands > .cand:nth-child(2){animation-delay:28ms}
+.cands > .cand:nth-child(3){animation-delay:56ms}
+.cands > .cand:nth-child(4){animation-delay:84ms}
+.cands > .cand:nth-child(5){animation-delay:112ms}
+.cands > .cand:nth-child(6){animation-delay:140ms}
+.cands > .cand:nth-child(7){animation-delay:168ms}
+.cands > .cand:nth-child(8){animation-delay:196ms}
+.cands > .cand:nth-child(9){animation-delay:224ms}
+.cands > .cand:nth-child(n+10){animation-delay:250ms}
+@media (prefers-reduced-motion: reduce){
+  .cands > .cand{animation:none !important}
+}
+
+/* ---------- 3. 搜索入口：页面的主行动，给它应有的分量 ---------- */
+.ask{padding:24px;border-radius:16px}
+.ask label{font-size:12px;font-weight:600;color:var(--t2);letter-spacing:0;margin-bottom:11px}
+.ask input{font-size:15px;padding:14px 17px;border-radius:11px}
+.ask .btn{padding:0 26px;border-radius:11px;font-size:14px}
+.examples{margin-top:15px}
+.examples span{font-size:11.5px}
+.chip{font-size:12px;padding:6px 13px;border-radius:20px;transition:.15s}
+
+/* ---------- 4. 区块标题：去掉那枚编号方块的重量感 ---------- */
+.section{padding:21px 22px;border-radius:14px}
+.section h2{font-size:15px;letter-spacing:-.01em}
+.section h2 .n{width:18px;height:18px;border-radius:5px;font-size:10.5px;
+  background:color-mix(in srgb,var(--accent) 88%,var(--text));}
+.section .cap{font-size:12px;line-height:1.65;color:var(--t3)}
+
+/* ---------- 5. 排行榜：介绍是次要信息，但要好读 ---------- */
+table.rank td{padding:11px 10px}
+table.rank td.nm{font-size:13.5px;letter-spacing:-.005em}
+table.rank td.nm .nm-sub{
+  font-size:11.5px;
+  color:var(--t3);
+  font-weight:400;
+  margin-top:3px;
+  line-height:1.62;
+  max-width:660px;
+  white-space:normal;
+}
+table.rank th{font-size:10.5px;letter-spacing:.02em;text-transform:uppercase}
+table.rank tbody tr{transition:background .12s}
+table.rank tbody tr:hover td{background:var(--row-hover)}
+.catpill{font-size:10px;padding:2px 7px;border-radius:5px}
+.lk.ic{width:26px;height:24px;border-radius:6px}
+
+/* ---------- 6. 我的监控 ---------- */
+.mon{padding:14px 0;gap:12px}
+.mon .nm{font-size:13.5px;letter-spacing:-.005em}
+.mon .nm .mon-sub{
+  display:block;font-size:11.5px;color:var(--t3);font-weight:400;
+  margin-top:3px;line-height:1.62;max-width:620px;white-space:normal;
+}
 .mon{align-items:flex-start}
 .mon .mrank,.mon .live,.mon .mlinks,.mon .x{margin-top:1px}
 
-/* 全部插件页 */
-.allbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-.allbar input{flex:1 1 220px;min-width:0;appearance:none;border:1px solid var(--line);border-radius:8px;
-  padding:8px 12px;font-family:inherit;font-size:12.5px;background:var(--input);color:var(--text)}
-.allbar input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--focus);background:var(--panel)}
-.allbar select{appearance:none;border:1px solid var(--line);border-radius:8px;padding:8px 11px;
-  font-family:inherit;font-size:12.5px;background:var(--panel);color:var(--t2);cursor:pointer}
-.allcount{font-size:11.5px;color:var(--t3);margin-left:auto;font-variant-numeric:tabular-nums}
-.pager{display:flex;gap:6px;justify-content:center;align-items:center;margin-top:16px;flex-wrap:wrap}
-.pager button{appearance:none;font-family:inherit;font-size:12px;border:1px solid var(--line);background:var(--panel);
-  color:var(--t2);border-radius:7px;padding:5px 11px;cursor:pointer;font-variant-numeric:tabular-nums}
-.pager button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+/* 对比图的条 */
+#watchChart .hrow > div:nth-child(2) > div{transition:width .5s cubic-bezier(.16,1,.3,1)}
+
+/* ---------- 7. 全部插件页 ---------- */
+.allbar{margin-bottom:16px;gap:9px}
+.allbar input{
+  flex:1 1 220px;min-width:0;appearance:none;border:1px solid var(--line);border-radius:9px;
+  padding:10px 13px;font-family:inherit;font-size:13px;background:var(--input);color:var(--text);
+  transition:border-color .15s,box-shadow .15s,background .15s;
+}
+.allbar input::placeholder{color:var(--t3)}
+.allbar input:focus{outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--focus);background:var(--panel)}
+.allbar select{
+  appearance:none;border:1px solid var(--line);border-radius:9px;padding:10px 13px;
+  font-family:inherit;font-size:12.5px;background:var(--panel);color:var(--t2);cursor:pointer;
+  transition:border-color .15s,color .15s;
+}
+.allbar select:hover{border-color:color-mix(in srgb,var(--accent) 40%,transparent);color:var(--text)}
+.allcount{font-size:11.5px;color:var(--t3);margin-left:auto;font-variant-numeric:tabular-nums;
+  letter-spacing:.01em}
+
+.pager{margin-top:20px;gap:5px}
+.pager button{
+  appearance:none;font-family:inherit;font-size:12px;border:1px solid var(--line);
+  background:var(--panel);color:var(--t2);border-radius:7px;padding:6px 12px;cursor:pointer;
+  font-variant-numeric:tabular-nums;transition:border-color .15s,color .15s,background .15s;
+}
+.pager button:hover:not(:disabled){border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--text)}
 .pager button.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:650}
-.pager button:disabled{opacity:.45;cursor:default}
-.pager .gap{color:var(--t3);font-size:12px;padding:0 2px}
+.pager button:disabled{opacity:.4;cursor:default}
+.pager .gap{color:var(--t3);font-size:12px;padding:0 3px}
 
-/* 全部插件页的卡片不显示勾选框，整卡可点（打开 npm） */
+/* 全部页的卡片不显示勾选框 */
 .cand.plain{cursor:default}
-.cand.plain:hover{border-color:var(--accent-line)}
-.cand.plain .nm .v{color:var(--t3);font-weight:500}
+.cand.plain:hover{border-color:color-mix(in srgb,var(--accent) 38%,transparent)}
 
-/* 全部页：卡片高度差异大，用列布局排，避免 grid 行内留下大片空白 */
-#allList{display:block;column-width:330px;column-gap:11px}
-#allList .cand{break-inside:avoid;page-break-inside:avoid;margin-bottom:11px}
+/* ---------- 8. 页签 ---------- */
+.tabs{border-radius:10px;padding:3px;gap:3px}
+.tabs button{
+  font-size:12.5px;font-weight:600;padding:8px 16px;border-radius:7px;
+  transition:color .15s,background .15s,box-shadow .15s;
+}
+.tabs button:hover{color:var(--t2)}
+.tabs button.on{box-shadow:0 1px 3px var(--shadow)}
 
-/* 介绍这块在窄栏里收一点 */
+/* ---------- 9. 提示条 ---------- */
+.toast{
+  font-size:12px;line-height:1.65;padding:10px 15px;border-radius:11px;
+  box-shadow:0 8px 28px -10px rgba(0,0,0,.5);
+  transform:translate(-50%,8px);transition:opacity .22s ease,transform .22s cubic-bezier(.16,1,.3,1);
+}
+.toast.on{transform:translate(-50%,0)}
+.toast code{margin-top:6px;font-size:11px;letter-spacing:.01em}
+
+/* ---------- 10. 窄栏 ---------- */
+@media(max-width:720px){
+  .section{padding:18px 16px}
+  .ask{padding:18px}
+  table.rank td.nm .nm-sub{max-width:100%}
+  .mon .nm .mon-sub{max-width:100%}
+}
 @media(max-width:480px){
-  table.rank td.nm .nm-sub{max-width:260px}
-  .mon .nm .mon-sub{max-width:300px}
+  .cand{padding:13px 13px}
+  .cand .zh{font-size:13px}
+  .cand .kv > span + span{padding-left:10px;margin-left:10px}
+  table.rank td.nm .nm-sub{max-width:240px}
+  .mon .nm .mon-sub{max-width:100%}
+  .allbar{gap:7px}
 }
