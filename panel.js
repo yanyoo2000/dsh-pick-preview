@@ -42,6 +42,28 @@ function maintCell(d) {
     `<div${stale ? ' class="stale"' : ''}>${ageText(d.age)}</div>${cad}</td>`
 }
 
+/* ---------------- 作者头像 ---------------- */
+/** 从 GitHub 地址取 owner；退回到 scoped 包名 */
+function ownerOf(rec) {
+  const m = String(rec.ghUrl || '').match(/github\.com[/:]([^/\s]+)/i)
+  if (m) return m[1]
+  const s = String(rec.n || '').match(/^@([^/]+)\//)
+  return s ? s[1] : ''
+}
+
+/** 头像：有 GitHub 就取它的头像，失败或没有就退回带色字母块 */
+function avatarHtml(rec) {
+  const owner = ownerOf(rec)
+  const seed = owner || String(rec.n || '')
+  const initial = (owner || String(rec.n || '').replace(/^@/, '')).slice(0, 2).toUpperCase()
+  let hue = 0
+  for (let i = 0; i < seed.length; i++) hue = (hue * 31 + seed.charCodeAt(i)) % 360
+  const img = owner
+    ? `<img src="https://github.com/${encodeURIComponent(owner)}.png?size=96" alt="" loading="lazy" referrerpolicy="no-referrer" style="opacity:0" onload="this.style.opacity=1" onerror="this.remove()">`
+    : ''
+  return `<span class="av" style="--h:${hue}" aria-hidden="true"><span class="av-t">${esc(initial)}</span>${img}</span>`
+}
+
 /* ---------------- 分类筛选 ---------------- */
 function buildCategoryFilter() {
   const sel = $('#rankCat')
@@ -83,9 +105,12 @@ function renderRank() {
     const zh = introOf(r)
     return `<tr>` +
       `<td>${String(i + 1).padStart(2, '0')}</td>` +
-      `<td class="nm">${esc(r.n)} <span class="v">v${esc(r.v)}</span>` +
-        (zh ? `<div class="nm-sub">${esc(zh)}</div>` : '') +
-      `</td>` +
+      `<td class="nm"><div class="nm-wrap">${avatarHtml(r)}` +
+        `<div class="nm-main">` +
+          `<div class="nm-t">${esc(r.n)} <span class="v">v${esc(r.v)}</span></div>` +
+          (zh ? `<div class="nm-sub">${esc(zh)}</div>` : '') +
+        `</div>` +
+      `</div></td>` +
       `<td><span class="catpill">${esc(r.cat)}</span></td>` +
       `<td class="r"><b>${num(val(r))}</b></td>` +
       `<td class="r">${num(r.w)}</td>` +
