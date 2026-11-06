@@ -115,6 +115,30 @@ h1 .hl{
   margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--ink-3);
   text-align:right;line-height:1.95;letter-spacing:.03em;
 }
+
+/* 明暗切换：描边小方钮，和页面其他控件同一套语言 */
+.theme{
+  appearance:none;flex:none;align-self:center;
+  width:32px;height:32px;padding:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-3);
+  border:1px solid var(--line);background:none;border-radius:0;
+  cursor:pointer;
+  transition:color .15s,border-color .15s,background .15s;
+}
+.theme:hover{color:var(--orange);border-color:var(--orange);background:var(--orange-dim)}
+.theme:active{transform:translateY(1px)}
+.theme svg{display:block}
+/* 亮色显示月亮（点了变暗），暗色显示太阳 */
+.theme .ic-moon{display:none}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]) .theme .ic-sun{display:none}
+  :root:not([data-theme="dark"]) .theme .ic-moon{display:block}
+}
+:root[data-theme="light"] .theme .ic-sun{display:none}
+:root[data-theme="light"] .theme .ic-moon{display:block}
+:root[data-theme="dark"] .theme .ic-sun{display:block}
+:root[data-theme="dark"] .theme .ic-moon{display:none}
 .meta b{color:var(--ink-2);font-weight:600}
 
 /* ================= 筛选 ================= */
@@ -158,13 +182,14 @@ h1 .hl{
 .tblwrap{overflow-x:auto;margin:8px 0 0}
 
 table.rank{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
-table.rank th:nth-child(1),table.rank td:nth-child(1){width:58px}
-table.rank th:nth-child(3),table.rank td:nth-child(3){width:124px}
-table.rank th:nth-child(4),table.rank td:nth-child(4){width:96px}
-table.rank th:nth-child(5),table.rank td:nth-child(5){width:96px}
-table.rank th:nth-child(6),table.rank td:nth-child(6){width:76px}
-table.rank th:nth-child(7),table.rank td:nth-child(7){width:92px}
-table.rank th:nth-child(8),table.rank td:nth-child(8){width:62px}
+table.rank th:nth-child(1),table.rank td:nth-child(1){width:54px}
+table.rank th:nth-child(3),table.rank td:nth-child(3){width:116px}
+table.rank th:nth-child(4),table.rank td:nth-child(4){width:84px}
+table.rank th:nth-child(5),table.rank td:nth-child(5){width:84px}
+table.rank th:nth-child(6),table.rank td:nth-child(6){width:72px}
+table.rank th:nth-child(7),table.rank td:nth-child(7){width:60px}
+table.rank th:nth-child(8),table.rank td:nth-child(8){width:88px}
+table.rank th:nth-child(9),table.rank td:nth-child(9){width:62px}
 
 table.rank th{
   text-align:left;font-size:9.5px;color:var(--ink-3);font-weight:600;
@@ -228,13 +253,17 @@ table.rank td.nm .nm-sub{
 }
 
 td.r,th.r{text-align:right;white-space:nowrap}
+
+/* 当前排法：表头点亮，行里对应的那格转橙加粗 */
+table.rank th.r.sorted{color:var(--orange)}
+table.rank td.r.sorted{color:var(--orange);font-weight:700}
+
 table.rank td.mt{line-height:1.45}
 table.rank td.mt .sub{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);letter-spacing:.04em}
 table.rank td.mt .stale{color:var(--orange);font-weight:600}
 table.rank td.lks{white-space:nowrap}
 
-/* 排序列的数字：橙色，是这一行要读的那个数 */
-table.rank td.r b{color:var(--orange);font-weight:700}
+/* 排序列的数字：橙色，是这一行要读的那个数（列固定后由 .sorted 决定，不再按位置涂色） */
 
 .catpill{
   font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;

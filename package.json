@@ -1,0 +1,26 @@
+{
+  "name": "dsh-pick-preview",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "DSH 插件排行：按去噪后的指标排行，每条带一段中文介绍",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/stage.mjs",
+    "preview": "vite preview",
+    "data:fetch": "node scripts/fetch-meta.mjs",
+    "data:prep": "node scripts/prep.mjs",
+    "data:split": "node scripts/split.mjs",
+    "data:merge": "node scripts/merge.mjs",
+    "data:trim": "node scripts/apply-trim.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "vite": "^7.1.12",
+    "vite-plugin-singlefile": "^2.3.0"
+  }
+}

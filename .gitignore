@@ -1,13 +1,11 @@
-# 中间产物，可由 tools/ 里的脚本重建
-batches/
-out/
-gen-input.json
-manifest.json
-
+# 依赖与构建产物
 node_modules/
+dist/
+
+# 数据管线的中间产物（可由 scripts/ 重建）
+.work/
+
+# 系统垃圾
 *.log
 .DS_Store
 Thumbs.db
-batches2/
-out2/
-manifest2.json
