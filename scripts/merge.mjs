@@ -11,6 +11,7 @@ import {
   readJson,
   collectBatches,
   reportLengths,
+  INTRO_MAX,
 } from './_shared.mjs'
 
 const catalog = readData('catalog.json')
@@ -53,6 +54,6 @@ console.log(`长度：最短 ${L.min}  中位 ${L.median}  最长 ${L.max}`)
 console.log(`异常：过长 ${L.tooLong}，过短 ${L.tooShort}，批处理问题 ${problems.length}`)
 if (missing.length) console.log(`目录里还缺介绍 ${missing.length} 个：${missing.slice(0, 10).join(', ')}`)
 if (problems.length) console.log('问题：\n' + problems.slice(0, 20).join('\n'))
-if (L.tooLong) console.log(`\n有 ${L.tooLong} 条超过 220 字，可跑 node scripts/apply-trim.mjs 压缩`)
+if (L.tooLong) console.log(`\n有 ${L.tooLong} 条超过 ${INTRO_MAX} 字，可跑 node scripts/apply-trim.mjs 压缩`)
 
 console.log('\n下一步：npm run build')

@@ -5,7 +5,7 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { WORK_DIR, readData, writeData, stripFence, reportLengths } from './_shared.mjs'
+import { WORK_DIR, readData, writeData, stripFence, reportLengths, INTRO_MAX, countOverMax } from './_shared.mjs'
 
 const ids = process.argv.slice(2).filter((a) => !a.startsWith('-'))
 const targets = ids.length ? ids : ['trim-1', 'trim-2']
@@ -37,4 +37,6 @@ for (const id of targets) {
 writeData('intro.json', intro)
 
 const L = reportLengths(intro)
-console.log(`压缩 ${n} 条；最长 ${L.max}；超过 180 字的 ${Object.values(intro).filter((s) => s.length > 180).length}；覆盖 ${Object.keys(intro).length}`)
+console.log(
+  `压缩 ${n} 条；最长 ${L.max}；超过 ${INTRO_MAX} 字的 ${countOverMax(intro)}；覆盖 ${Object.keys(intro).length}`,
+)

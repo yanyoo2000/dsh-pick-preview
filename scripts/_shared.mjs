@@ -112,17 +112,26 @@ export function collectBatches({ manifest, batchDir, outDir }) {
   return { intro, problems }
 }
 
+/** 介绍长度的唯一口径：超过这个字数就算过长，该压 */
+export const INTRO_MAX = 220
+
 /** 介绍长度体检 */
 export function reportLengths(intro) {
   const lens = Object.values(intro)
     .map((s) => s.length)
     .sort((a, b) => a - b)
   if (!lens.length) return { min: 0, median: 0, max: 0, tooLong: 0, tooShort: 0 }
+  const values = Object.values(intro)
   return {
     min: lens[0],
     median: lens[lens.length >> 1],
     max: lens[lens.length - 1],
-    tooLong: Object.values(intro).filter((s) => s.length > 220).length,
-    tooShort: Object.values(intro).filter((s) => s.length < 8).length,
+    tooLong: values.filter((s) => s.length > INTRO_MAX).length,
+    tooShort: values.filter((s) => s.length < 8).length,
   }
+}
+
+/** 超过 INTRO_MAX 的介绍条数——压缩脚本和合并脚本共用同一个判断 */
+export function countOverMax(intro) {
+  return Object.values(intro).filter((s) => s.length > INTRO_MAX).length
 }
