@@ -5,7 +5,7 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { readData, writeData, pickCatalogPath } from './_shared.mjs'
+import { readData, writeData } from './_shared.mjs'
 
 const ALL = process.argv.includes('--all')
 
@@ -21,7 +21,9 @@ if (!ALL) {
   }
 }
 
-// 重点包：周下载 Top 300 + 每个分类前 12 + 已装的
+// 取 README 的范围：--readme-all 时全取（要给每个包写介绍），
+// 否则只取重点包：周下载 Top 300 + 每个分类前 12 + 已装的
+const README_ALL = process.argv.includes('--readme-all')
 const TOP_N = 300
 const picked = new Set(all.slice(0, TOP_N).map((r) => r.n))
 const byCat = new Map()
@@ -38,21 +40,38 @@ if (fs.existsSync(NM)) {
     else picked.add(e)
   }
 }
-const wantReadme = picked
-const targets = all.filter((r) => ALL || !meta[r.n] || meta[r.n].missing || !meta[r.n].desc)
+const wantReadme = README_ALL ? new Set(all.map((r) => r.n)) : picked
 
-console.log(`目录共 ${all.length} 个包；本次要抓 ${targets.length} 个；其中取 README 的 ${wantReadme.size} 个`)
+/** 要抓的：没记录、404、没描述；--readme-all 模式下还补上「有记录但没存 README」的 */
+const targets = all.filter((r) => {
+  if (ALL) return true
+  const m = meta[r.n]
+  if (!m || m.missing || !m.desc) return true
+  if (README_ALL && wantReadme.has(r.n) && !(m.readme && m.readme.length > 80)) return true
+  return false
+})
+
+console.log(
+  `目录共 ${all.length} 个包；本次要抓 ${targets.length} 个；其中取 README 的 ${wantReadme.size} 个`,
+)
 
 let done = 0
 let fail = 0
 let idx = 0
+const SAVE_EVERY = 200
+
+/** 边抓边存：中途断了重跑能接着来 */
+function save() {
+  writeData('npm-meta.json', meta)
+}
 
 async function fetchOne(name) {
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       const res = await fetch('https://registry.npmjs.org/' + encodeURIComponent(name), {
         headers: { accept: 'application/json' },
-        signal: AbortSignal.timeout(20000),
+        // 版本极多的包完整文档能到几十 MB，给足时间
+        signal: AbortSignal.timeout(90000),
       })
       if (res.status === 404) return { missing: true }
       if (!res.ok) throw new Error('HTTP ' + res.status)
@@ -83,14 +102,18 @@ async function worker() {
       meta[record.n] = { error: String(e.message) }
       fail++
     }
-    if (++done % 200 === 0) console.log(`  ${done}/${targets.length}  失败 ${fail}`)
+    if (++done % SAVE_EVERY === 0) {
+      save()
+      console.log(`  ${done}/${targets.length}  失败 ${fail}`)
+    }
   }
 }
 
 await Promise.all(Array.from({ length: 14 }, worker))
 
-writeData('npm-meta.json', meta)
+save()
 const withReadme = Object.values(meta).filter((x) => x.readme).length
 const ok = Object.values(meta).filter((x) => x.desc).length
-console.log(`元数据 ${Object.keys(meta).length} 条；有描述 ${ok}；带 README ${withReadme}；本次失败 ${fail}`)
-console.log(`dsh-pick 本地目录：${fs.existsSync(pickCatalogPath()) ? '有' : '没有（用仓库快照）'}`)
+const bad = Object.values(meta).filter((x) => x.error || x.missing).length
+console.log(`元数据 ${Object.keys(meta).length} 条；有描述 ${ok}；带 README ${withReadme}`)
+console.log(`本次失败 ${fail}；累计异常(404/报错) ${bad}`)

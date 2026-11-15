@@ -1,6 +1,7 @@
 import { Avatar } from './Avatar.jsx'
 import { LinkButtons } from './Links.jsx'
-import { ageText, isStale, num, pct } from '../data/format.js'
+import { Sparkline } from './Sparkline.jsx'
+import { ageText, compact, isStale, num, pct } from '../data/format.js'
 
 /**
  * 表格列固定，含义不随排序变化；当前排法用表头高亮 + 数值橙色标出来。
@@ -29,13 +30,32 @@ function DataCells({ plugin, metric }) {
 
   return (
     <>
-      <td className={`r${metric === 'base' ? ' sorted' : ''}`}>
-        {deep ? num(deep.base) : '—'}
-      </td>
+      <td className={`r${metric === 'base' ? ' sorted' : ''}`}>{deep ? num(deep.base) : '—'}</td>
       <td className={`r${metric === 'w' ? ' sorted' : ''}`}>{num(plugin.weekly)}</td>
       <td className={`r${tone}${metric === 'growth' ? ' sorted' : ''}`}>{pct(growth)}</td>
+      <td
+        className={`r${metric === 'stars' ? ' sorted' : ''}`}
+        title={plugin.ghRepo ? `GitHub: ${plugin.ghRepo}` : '没有 GitHub 仓库'}
+      >
+        {plugin.stars === null ? '—' : compact(plugin.stars)}
+      </td>
+      <td className={`r${metric === 'sc' ? ' sorted' : ''}`} title="dsh-pick 综合分，满分 100">
+        {plugin.score === null ? '—' : plugin.score}
+      </td>
       <td className={`r${metric === 's' ? ' sorted' : ''}`}>{deep ? deep.score : '—'}</td>
     </>
+  )
+}
+
+/** 趋势一格：30 天曲线 + 最近一天的量 */
+function TrendCell({ deep }) {
+  if (!deep || !deep.daily) return <td className="r tr">—</td>
+  const shown = deep.daily.filter((v) => typeof v === 'number')
+  const last = shown.length ? shown[shown.length - 1] : null
+  return (
+    <td className="r tr" title={`近 30 天每日下载，最近一天 ${last === null ? '未知' : num(last)}`}>
+      <Sparkline daily={deep.daily} />
+    </td>
   )
 }
 
@@ -59,7 +79,12 @@ export function RankTable({ rows, metric, emptyText }) {
             {head('base', '基线')}
             {head('w', '周下载')}
             {head('growth', '环比')}
+            {head('stars', '星标')}
+            {head('sc', '综合')}
             {head('s', '健康')}
+            <th className="r" title="近 30 天每日下载量">
+              趋势
+            </th>
             <th className="r" title="最近一次发版 · 平均几天发一个版本">
               更新
             </th>
@@ -69,7 +94,7 @@ export function RankTable({ rows, metric, emptyText }) {
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={9} className="empty">
+              <td colSpan={11} className="empty">
                 {emptyText}
               </td>
             </tr>
@@ -92,6 +117,7 @@ export function RankTable({ rows, metric, emptyText }) {
                   <span className="catpill">{plugin.cat}</span>
                 </td>
                 <DataCells plugin={plugin} metric={metric} />
+                <TrendCell deep={plugin.deep} />
                 <MaintCell deep={plugin.deep} />
                 <LinkButtons plugin={plugin} />
               </tr>

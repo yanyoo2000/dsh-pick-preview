@@ -5,6 +5,11 @@ dist/
 # 数据管线的中间产物（可由 scripts/ 重建）
 .work/
 
+# npm 原始元数据：抓下来给生成介绍用，体积随包数线性涨（现在 47 MB）。
+# 页面只读 catalog.json + intro.json，用不到这个文件，所以不进仓库。
+# 需要复现 intro.json 时本地跑 node scripts/fetch-meta.mjs --readme-all 重新抓。
+data/npm-meta.json
+
 # 系统垃圾
 *.log
 .DS_Store

@@ -149,6 +149,8 @@ h1 .hl{
   display:flex;gap:0;flex-wrap:wrap;align-items:center;
   margin:0;border-bottom:1px solid var(--line);
 }
+.chips{display:flex;flex-wrap:wrap;align-items:center}
+.selects{display:flex;gap:14px;align-items:center;margin-left:auto}
 .chip{
   background:none;color:var(--ink-3);border:0;border-radius:0;
   padding:9px 0;font-size:13px;font-family:var(--sans);cursor:pointer;
@@ -167,7 +169,6 @@ h1 .hl{
   appearance:none;border:0;border-radius:0;padding:5px 22px 5px 0;
   font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
   text-transform:uppercase;background:none;color:var(--ink-3);cursor:pointer;
-  margin-left:auto;
   background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
   background-position:calc(100% - 7px) 54%,calc(100% - 3px) 54%;
   background-size:4px 4px,4px 4px;background-repeat:no-repeat;
@@ -183,13 +184,16 @@ h1 .hl{
 
 table.rank{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
 table.rank th:nth-child(1),table.rank td:nth-child(1){width:54px}
-table.rank th:nth-child(3),table.rank td:nth-child(3){width:116px}
-table.rank th:nth-child(4),table.rank td:nth-child(4){width:84px}
-table.rank th:nth-child(5),table.rank td:nth-child(5){width:84px}
-table.rank th:nth-child(6),table.rank td:nth-child(6){width:72px}
-table.rank th:nth-child(7),table.rank td:nth-child(7){width:60px}
-table.rank th:nth-child(8),table.rank td:nth-child(8){width:88px}
-table.rank th:nth-child(9),table.rank td:nth-child(9){width:62px}
+table.rank th:nth-child(3),table.rank td:nth-child(3){width:112px}
+table.rank th:nth-child(4),table.rank td:nth-child(4){width:80px}
+table.rank th:nth-child(5),table.rank td:nth-child(5){width:80px}
+table.rank th:nth-child(6),table.rank td:nth-child(6){width:68px}
+table.rank th:nth-child(7),table.rank td:nth-child(7){width:74px}
+table.rank th:nth-child(8),table.rank td:nth-child(8){width:54px}
+table.rank th:nth-child(9),table.rank td:nth-child(9){width:54px}
+table.rank th:nth-child(10),table.rank td:nth-child(10){width:86px}
+table.rank th:nth-child(11),table.rank td:nth-child(11){width:82px}
+table.rank th:nth-child(12),table.rank td:nth-child(12){width:62px}
 
 table.rank th{
   text-align:left;font-size:9.5px;color:var(--ink-3);font-weight:600;
@@ -262,6 +266,14 @@ table.rank td.mt{line-height:1.45}
 table.rank td.mt .sub{font-family:var(--mono);font-size:9.5px;color:var(--ink-3);letter-spacing:.04em}
 table.rank td.mt .stale{color:var(--orange);font-weight:600}
 table.rank td.lks{white-space:nowrap}
+
+/* 趋势一格：30 天每日下载的迷你折线。只表达形状，数值看左边几列 */
+table.rank td.tr{padding-top:20px;line-height:0}
+.spark{display:block;overflow:visible}
+.spark path{stroke:var(--ink-3);opacity:.5}
+.spark.up path{stroke:var(--green);opacity:.9}
+.spark.down path{stroke:var(--red);opacity:.9}
+td.r.sorted .spark path{opacity:1;stroke-width:1.5}
 
 /* 排序列的数字：橙色，是这一行要读的那个数（列固定后由 .sorted 决定，不再按位置涂色） */
 

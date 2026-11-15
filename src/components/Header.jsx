@@ -15,7 +15,8 @@ export function Header({ facts, theme, onToggleTheme }) {
           <div className="tagline">按去噪后的指标排：谁在被真正使用，一眼看得出来。</div>
         </div>
         <div className="meta">
-          目录 <b>{num(facts.total)}</b> 个插件 · 去噪指标 <b>{num(facts.withDeep)}</b> 个
+          目录 <b>{num(facts.total)}</b> 个插件 · 去噪指标 <b>{num(facts.withDeep)}</b> 个 · 星标{' '}
+          <b>{num(facts.withStars)}</b> 个
           <br />
           数据截止 <b>{facts.anchor}</b>（npm 统计滞后约 5 天）
         </div>
